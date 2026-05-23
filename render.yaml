@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: shopease-support-backend
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: node src/server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: GROQ_API_KEY
+        sync: false
+      - key: CHROMA_URL
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
