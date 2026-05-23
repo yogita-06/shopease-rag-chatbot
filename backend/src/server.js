@@ -29,6 +29,12 @@ app.use(cors({ origin: corsOrigins }));
 
 app.use(express.json());
 
+// Request logger — helps diagnose routing issues in Render logs
+app.use((req, _res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+  next();
+});
+
 /**
  * Root Route
  */
@@ -113,7 +119,8 @@ app.use((err, req, res, next) => {
  */
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`[Server] ShopEase support running on port ${PORT}`);
-  console.log(`[Server] GROQ model: llama-3.3-70b-versatile`);
-  console.log(`[Server] CHROMA_URL: ${process.env.CHROMA_URL || "http://localhost:8000 (default)"}`);
-  console.log(`[Server] CORS origin: ${JSON.stringify(corsOrigins)}`);
+  console.log(`[Server] GROQ model  : llama-3.3-70b-versatile`);
+  console.log(`[Server] CHROMA_URL  : ${process.env.CHROMA_URL || "http://localhost:8000 (default)"}`);
+  console.log(`[Server] CORS origin : ${JSON.stringify(corsOrigins)}`);
+  console.log(`[Server] Routes      : POST /api/chat | POST /api/ingest | GET /api/health`);
 });

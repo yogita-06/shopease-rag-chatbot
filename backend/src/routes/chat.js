@@ -9,10 +9,12 @@ const SYSTEM_PROMPT = `You are ShopEase support agent. Answer based on FAQ conte
 
 // POST /api/chat
 router.post("/chat", async (req, res) => {
+  console.log("[CHAT ROUTE HIT]", req.body);
+
   const { question } = req.body;
 
   if (!question || typeof question !== "string") {
-    return res.status(400).json({ error: "Request body must include a 'question' string." });
+    return res.status(400).json({ success: false, error: "Request body must include a 'question' string." });
   }
 
   try {
@@ -24,7 +26,7 @@ router.post("/chat", async (req, res) => {
 
     if (results.length === 0) {
       return res.json({
-        question,
+        success: true,
         answer: "I don't have this information, contact support.",
         sources: [],
       });
@@ -47,10 +49,10 @@ router.post("/chat", async (req, res) => {
       ...new Set(results.map((r) => r.source).filter(Boolean)),
     ];
 
-    res.json({ question, answer, sources });
+    res.json({ success: true, answer, sources });
   } catch (err) {
     console.error("[/api/chat] Error:", err.message);
-    res.status(500).json({ error: "Failed to process your question. Please try again." });
+    res.status(500).json({ success: false, error: "Failed to process your question. Please try again." });
   }
 });
 
