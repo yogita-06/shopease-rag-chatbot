@@ -6,18 +6,26 @@ import { sendMessage } from "./services/groqService.js";
 import ingestRouter from "./routes/ingest.js";
 import chatRouter from "./routes/chat.js";
 
+// Validate required env vars before binding the port
+if (!process.env.GROQ_API_KEY) {
+  console.error(
+    "[Server] GROQ_API_KEY is not set.\n" +
+    "  Local: add it to backend/.env\n" +
+    "  Render: set it in the service dashboard → Environment"
+  );
+  process.exit(1);
+}
+
 const app = express();
 
 const PORT = process.env.PORT || 3000;
 
-/**
- * Middleware
- */
-app.use(
-  cors({
-    origin: "*",
-  })
-);
+// Allow an explicit list in production, fall back to wildcard for local dev
+const corsOrigins = process.env.FRONTEND_URL
+  ? [process.env.FRONTEND_URL, "http://localhost:5173", "http://localhost:4173"]
+  : "*";
+
+app.use(cors({ origin: corsOrigins }));
 
 app.use(express.json());
 
@@ -104,7 +112,8 @@ app.use((err, req, res, next) => {
  * Start Server
  */
 app.listen(PORT, "0.0.0.0", () => {
-  console.log(
-    `🚀 ShopEase support server running on port ${PORT}`
-  );
+  console.log(`[Server] ShopEase support running on port ${PORT}`);
+  console.log(`[Server] GROQ model: llama-3.3-70b-versatile`);
+  console.log(`[Server] CHROMA_URL: ${process.env.CHROMA_URL || "http://localhost:8000 (default)"}`);
+  console.log(`[Server] CORS origin: ${JSON.stringify(corsOrigins)}`);
 });

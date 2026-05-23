@@ -7,8 +7,9 @@ let collection = null;
 
 function getClient() {
   if (!client) {
-    console.log("[VectorService] Creating embedded ChromaDB client...");
-    client = new ChromaClient();
+    const url = process.env.CHROMA_URL || "http://localhost:8000";
+    console.log(`[VectorService] Connecting to ChromaDB at ${url}...`);
+    client = new ChromaClient({ path: url });
   }
 
   return client;

@@ -53,13 +53,12 @@ router.post("/ingest/all", async (req, res) => {
   console.log(`\n[INGEST/ALL] Starting bulk ingest from: ${DATA_DIR}`);
 
   // 1. Test ChromaDB connection first
-  try {
-    await testConnection();
-    console.log(`[INGEST/ALL] ChromaDB connection OK`);
-  } catch (err) {
-    console.error(`[INGEST/ALL] ChromaDB connection FAILED:`, err.message);
-    return res.status(500).json({ error: "ChromaDB connection failed", detail: err.message });
+  const connResult = await testConnection();
+  if (!connResult.success) {
+    console.error(`[INGEST/ALL] ChromaDB connection FAILED:`, connResult.error);
+    return res.status(500).json({ error: "ChromaDB connection failed", detail: connResult.error });
   }
+  console.log(`[INGEST/ALL] ChromaDB connection OK — docs in collection: ${connResult.count}`);
 
   // 2. List files in data/
   let files;
