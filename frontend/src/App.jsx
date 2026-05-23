@@ -1,10 +1,11 @@
 import { useState, useRef, useEffect } from 'react'
 
-const API_URL =
-  import.meta.env.VITE_API_URL
-    ? `${import.meta.env.VITE_API_URL}/api/chat`
-    : 'http://localhost:3000/api/chat';
-    
+const API_BASE = import.meta.env.VITE_API_URL;
+
+const API_URL = API_BASE
+  ? `${API_BASE}/api/chat`
+  : 'http://localhost:3000/api/chat';
+
 const WELCOME_MSG = {
   id: 'welcome',
   role: 'bot',
