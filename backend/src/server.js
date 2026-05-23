@@ -3,6 +3,7 @@ import express from "express";
 import cors from "cors";
 
 import { sendMessage } from "./services/groqService.js";
+import { testConnection } from "./services/vectorService.js";
 import ingestRouter from "./routes/ingest.js";
 import chatRouter from "./routes/chat.js";
 
@@ -123,4 +124,18 @@ app.listen(PORT, "0.0.0.0", () => {
   console.log(`[Server] CHROMA_URL  : ${process.env.CHROMA_URL || "http://localhost:8000 (default)"}`);
   console.log(`[Server] CORS origin : ${JSON.stringify(corsOrigins)}`);
   console.log(`[Server] Routes      : POST /api/chat | POST /api/ingest | GET /api/health`);
+
+  // Non-blocking ChromaDB connectivity check at startup
+  testConnection().then((result) => {
+    if (result.success) {
+      console.log(`[Server] ChromaDB OK — ${result.count} document(s) indexed`);
+    } else {
+      console.warn(`[Server] ChromaDB UNAVAILABLE: ${result.error}`);
+      console.warn("[Server] /api/chat will return a graceful fallback message instead of 500.");
+      console.warn("[Server] PRODUCTION FIX: deploy a hosted ChromaDB and set the CHROMA_URL env var.");
+      console.warn("[Server]   Options: Zilliz Cloud (free tier), Chroma Cloud, or a self-hosted Render service.");
+    }
+  }).catch((e) => {
+    console.warn("[Server] ChromaDB startup check threw:", e.message);
+  });
 });
