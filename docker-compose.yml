@@ -1,0 +1,16 @@
+version: "3"
+services:
+  chromadb:
+    image: chromadb/chroma
+    ports:
+      - "8000:8000"
+
+  backend:
+    build: ./backend
+    ports:
+      - "3000:3000"
+    environment:
+      - CHROMA_URL=http://chromadb:8000
+      - GROQ_API_KEY=${GROQ_API_KEY}
+    depends_on:
+      - chromadb
