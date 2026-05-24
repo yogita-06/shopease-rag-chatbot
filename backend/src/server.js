@@ -21,12 +21,7 @@ const app = express();
 
 const PORT = process.env.PORT || 3000;
 
-// Allow an explicit list in production, fall back to wildcard for local dev
-const corsOrigins = process.env.FRONTEND_URL
-  ? [process.env.FRONTEND_URL, "http://localhost:5173", "http://localhost:4173"]
-  : "*";
-
-app.use(cors({ origin: corsOrigins }));
+app.use(cors());
 
 app.use(express.json());
 
@@ -122,7 +117,7 @@ app.listen(PORT, "0.0.0.0", () => {
   console.log(`[Server] ShopEase support running on port ${PORT}`);
   console.log(`[Server] GROQ model  : llama-3.3-70b-versatile`);
   console.log(`[Server] CHROMA_URL  : ${process.env.CHROMA_URL || "http://localhost:8000 (default)"}`);
-  console.log(`[Server] CORS origin : ${JSON.stringify(corsOrigins)}`);
+  console.log(`[Server] CORS origin : * (all origins allowed)`);
   console.log(`[Server] Routes      : POST /api/chat | POST /api/ingest | GET /api/health`);
 
   // Non-blocking ChromaDB connectivity check at startup

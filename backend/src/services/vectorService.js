@@ -12,7 +12,7 @@ function resetConnection() {
 
 function getClient() {
   if (!client) {
-    const url = process.env.CHROMA_URL = "https://chromadb-yrm9.onrender.com";
+    const url = process.env.CHROMA_URL || "http://localhost:8000";
     console.log(`[VectorService] Connecting to ChromaDB at ${url}`);
     client = new ChromaClient({ path: url });
   }
